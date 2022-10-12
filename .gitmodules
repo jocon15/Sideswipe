@@ -1,0 +1,6 @@
+[submodule "dependencies/Binfire"]
+	path = dependencies/Binfire
+	url = https://github.com/jocon15/Bonfire.git
+[submodule "dependencies/Bonfire"]
+	path = dependencies/Bonfire
+	url = https://github.com/jocon15/Bonfire.git
