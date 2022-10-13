@@ -114,30 +114,94 @@ namespace sideswipe {
 		std::chrono::high_resolution_clock::time_point m_startTime;
 		std::chrono::duration<float> m_duration;
 
+		/*
+		* Check the equality of two strings
+		* 
+		* @param expected the expected value
+		* @param actual the actual value
+		* 
+		* @return the truth value of the comparison
+		*/
 		bool IsEqual(std::string expected, std::string actual);
 
+		/*
+		* Check the equality of two integers
+		* 
+		* @param expected the expected value
+		* @param actual the actual value
+		* 
+		* @return the truth value of the comparison
+		*/
 		bool IsEqual(int expected, int actual);
 
+		/*
+		* Check the equality of two doubles
+		*
+		* @param expected the expected value
+		* @param actual the actual value
+		*
+		* @return the truth value of the comparison
+		*/
 		bool IsEqual(double expected, double actual);
 
+		/*
+		* Check the equality of two floats
+		*
+		* @param expected the expected value
+		* @param actual the actual value
+		*
+		* @return the truth value of the comparison
+		*/
 		bool IsEqual(float expected, float actual);
 
+		/*
+		* Check the truth value of a boolean
+		*
+		* @param val the value to be checked
+		*
+		* @return if the value is true
+		*/
 		bool IsTrue(bool val);
 
+		/*
+		* Check the truth value of a boolean
+		*
+		* @param val the value to be checked
+		*
+		* @return if the value is false
+		*/
 		bool IsFalse(bool val);
 
+		/*
+		* Print test passed to the terminal
+		*/
 		template<typename T>
 		void PrintTestPassed(T expected, T actual);
 
+		/*
+		* Print test failed to the terminal
+		*/
 		template<typename T>
 		void PrintTestFailed(T expected, T actual);
 
+		/*
+		* Print group start to the terminal
+		*/
 		void PrintGroupStart();
 
+		/*
+		* Print group end to the terminal
+		*/
 		void PrintGroupEnd();
 
+		/*
+		* Print the testing environment to the terminal
+		*/
 		void PrintTestingEnvironment();
 
+		/*
+		* Print the results of the test to the terminal
+		*/
 		void PrintResults();
 	};
 }
