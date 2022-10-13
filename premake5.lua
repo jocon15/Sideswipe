@@ -110,7 +110,7 @@ project "Example"
 	}
 
 	includedirs{
-		"dependencies/Bonfire/Bonfire/include"
+		"dependencies/Bonfire/Bonfire/include",
 		"Sideswipe/include"
 	}
 
