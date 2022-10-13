@@ -3,10 +3,19 @@
 
 int main(int argc, char* argv[]) {
 
-
-	Tester tester = Tester();
-
+	sideswipe::Tester tester = sideswipe::Tester();
+	tester.StartGroup("TestCases");
 	tester.AssertTrue(true);
+	tester.AssertTrue(true);
+	tester.AssertTrue(true);
+	tester.AssertTrue(true);
+	tester.NotTestable("Iphone");
+	tester.AssertTrue(true);
+	tester.AssertTrue(true);
+	tester.AssertTrue(false);
+	tester.AssertTrue(false);
+	tester.AssertTrue(false);
+	tester.EndGroup();
 
 	return 0;
 }
