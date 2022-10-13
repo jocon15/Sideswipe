@@ -32,24 +32,51 @@ void Tester::NotTestable(std::string test)
 {
 }
 
-void Tester::AssertEqual(std::string expected, std::string actual)
-{
+void Tester::AssertEqual(std::string expected, std::string actual){
+	if (IsEqual(expected, actual)) {
+		PrintTestPassed<std::string>(expected, actual);
+		m_passCnt++;
+	}
+	else {
+		PrintTestFailed<std::string>(expected, actual);
+		m_failCnt++;
+	}
 }
 
-void Tester::AssertEqual(int expected, int actual)
-{
+void Tester::AssertEqual(int expected, int actual){
+	if (IsEqual(expected, actual)) {
+		PrintTestPassed<int>(expected, actual);
+		m_passCnt++;
+	}
+	else {
+		PrintTestFailed<int>(expected, actual);
+		m_failCnt++;
+	}
 }
 
-void Tester::AssertEqual(double expected, double actual)
-{
+void Tester::AssertEqual(double expected, double actual){
+	if (IsEqual(expected, actual)) {
+		PrintTestPassed<double>(expected, actual);
+		m_passCnt++;
+	}
+	else {
+		PrintTestFailed<double>(expected, actual);
+		m_failCnt++;
+	}
 }
 
-void Tester::AssertEqual(float expected, float actual)
-{
+void Tester::AssertEqual(float expected, float actual){
+	if (IsEqual(expected, actual)) {
+		PrintTestPassed<float>(expected, actual);
+		m_passCnt++;
+	}
+	else {
+		PrintTestFailed<float>(expected, actual);
+		m_failCnt++;
+	}
 }
 
-void Tester::AssertTrue(bool actual)
-{
+void Tester::AssertTrue(bool actual){
 	if (IsTrue(actual)) {
 		//you can use it like this
 		//PrintTestPassed(true, actual);
@@ -63,55 +90,46 @@ void Tester::AssertTrue(bool actual)
 	}
 }
 
-void Tester::AssertFalse(bool actual)
-{
+void Tester::AssertFalse(bool actual){
+	if (IsFalse(actual)) {
+		PrintTestPassed<bool>(false, actual);
+		m_passCnt++;
+	}
+	else {
+		PrintTestFailed<bool>(false, actual);
+		m_failCnt++;
+	}
 }
 
 // =========== Private Definitions ===========
 
-//bool Tester::IsEqual(std::string expected, std::string actual){
-//	if (IsEqual(expected, actual)) {
-//		PrintTestPassed(expected, actual);
-//		m_passCnt++;
-//	}
-//	else {
-//		PrintTestFailed(expected, actual);
-//		m_failCnt++;
-//	}
-//}
-//
-//bool Tester::IsEqual(int expected, int actual){
-//	if (IsEqual(expected, actual)) {
-//		PrintTestPassed(expected, actual);
-//		m_passCnt++;
-//	}
-//	else {
-//		PrintTestFailed(expected, actual);
-//		m_failCnt++;
-//	}
-//}
-//
-//bool Tester::IsEqual(double expected, double actual){
-//	if (IsEqual(expected, actual)) {
-//		PrintTestPassed(expected, actual);
-//		m_passCnt++;
-//	}
-//	else {
-//		PrintTestFailed(expected, actual);
-//		m_failCnt++;
-//	}
-//}
-//
-//bool Tester::IsEqual(float expected, float actual){
-//	if (IsEqual(expected, actual)) {
-//		PrintTestPassed(expected, actual);
-//		m_passCnt++;
-//	}
-//	else {
-//		PrintTestFailed(expected, actual);
-//		m_failCnt++;
-//	}
-//}
+bool Tester::IsEqual(std::string expected, std::string actual){
+	if (expected == actual)
+		return true;
+	else
+		return false;
+}
+
+bool Tester::IsEqual(int expected, int actual){
+	if (expected == actual)
+		return true;
+	else
+		return false;
+}
+
+bool Tester::IsEqual(double expected, double actual){
+	if (abs(expected - actual) < m_epsilonDouble)
+		return true;
+	else
+		return false;
+}
+
+bool Tester::IsEqual(float expected, float actual){
+	if (abs(expected - actual) < m_epsilonFloat)
+		return true;
+	else
+		return false;
+}
 
 bool Tester::IsTrue(bool actual){
 	return actual;
@@ -121,82 +139,25 @@ bool Tester::IsFalse(bool actual) {
 	return !actual;
 }
 
-//bool Tester::IsFalse(bool actual){
-//	if (IsFalse(actual)) {
-//		PrintTestPassed(false, actual);
-//		m_passCnt++;
-//	}
-//	else {
-//		PrintTestFailed(false, actual);
-//		m_failCnt++;
-//	}
-//}
-
-/*
-* 
-* It would be nice to have a template here so we only have to have one of these functions
-* 
-* need to figure out what the errors mean
-*/
-
-
 template<typename T>
 void Tester::PrintTestPassed(T expected, T actual) {
 	std::stringstream pre;
 	pre << "[&2Pass&] [Expected: " << expected << "] [Actual: " << actual << "]" << std::endl;
-	//std::string output = "[&2Pass&] [Expected: " + expected + "] [Actual: " + actual + "]";
 	std::string output = pre.str();
 	m_logger.ToTerminal(output);
 }
 
-//void Tester::PrintTestPassed(int expected, int actual)
-//{
-//}
-//
-//void Tester::PrintTestPassed(double expected, double actual)
-//{
-//}
-//
-//void Tester::PrintTestPassed(float expected, float actual)
-//{
-//}
-//
-//void Tester::PrintTestPassed(bool expected, bool actual)
-//{
-//}
-//
 template<typename T>
 void Tester::PrintTestFailed(T expected, T actual){
 	std::stringstream pre;
 	pre << "[&4Failed&] [Expected: " << expected << "] [Actual: " << actual << "]" << std::endl;
-	//std::string output = "[&2Pass&] [Expected: " + expected + "] [Actual: " + actual + "]";
 	std::string output = pre.str();
 	m_logger.ToTerminal(output);
 }
-//
-//void Tester::PrintTestFailed(int expected, int actual)
-//{
-//}
-//
-//void Tester::PrintTestFailed(double expected, double actual)
-//{
-//}
-//
-//void Tester::PrintTestFailed(float expected, float actual)
-//{
-//}
-//
-//void Tester::PrintTestFailed(bool expected, bool actual)
-//{
-//}
 
 void Tester::PrintTestingEnvironment(){
 	std::cout << "Testing Environment" << std::endl;
 	std::cout << "Epsilon double : " << m_epsilonDouble << std::endl;
 	std::cout << "Epsilon float  : " << m_epsilonFloat << std::endl;
 	std::cout << std::endl;
-}
-
-void Tester::ResetTerminalColor()
-{
 }
