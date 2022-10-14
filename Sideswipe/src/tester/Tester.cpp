@@ -6,24 +6,24 @@ namespace sideswipe {
 
 	Tester::Tester() {
 		m_startTime = timing::TimePoint();
-		PrintTestingEnvironment();
+		OutputTestEnvironment();
 	}
 
 	Tester::Tester(double epsilonD, float epsilonF) {
 		m_startTime = timing::TimePoint();
 		m_epsilonDouble = epsilonD;
 		m_epsilonFloat = epsilonF;
-		PrintTestingEnvironment();
+		OutputTestEnvironment();
 	}
 
 	Tester::~Tester() {
-		// call the Logger destructor to initiate cleanup
-		m_logger.~CustomLogger();
-
 		m_duration = timing::TimePoint() - m_startTime;
 
-		// print the test results
-		PrintResults();
+		// Output the test results
+		OutputTestResults();
+
+		// call the Logger destructor to initiate cleanup
+		m_logger.~CustomLogger();
 	}
 
 	void Tester::TestTester() {
@@ -33,12 +33,12 @@ namespace sideswipe {
 	void Tester::StartGroup(std::string groupName) {
 		m_groupName = groupName;
 		m_inGroup = true;
-		PrintGroupStart();
+		OutputGroupStart();
 	}
 
 	void Tester::EndGroup() {
 		m_inGroup = false;
-		PrintGroupEnd();
+		OutputGroupEnd();
 	}
 
 	void Tester::NotTestable(std::string entity) {
@@ -51,46 +51,51 @@ namespace sideswipe {
 		m_logger.ToTerminal(output);
 	}
 
+	void Tester::SaveToFile(std::string filepath) {
+		m_filepath = filepath;
+		m_saveToFile = true;
+	}
+
 	void Tester::AssertEqual(std::string expected, std::string actual) {
 		if (IsEqual(expected, actual)) {
-			PrintTestPassed<std::string>(expected, actual);
+			OutputTestPassed<std::string>(expected, actual);
 			m_passCnt++;
 		}
 		else {
-			PrintTestFailed<std::string>(expected, actual);
+			OutputTestFailed<std::string>(expected, actual);
 			m_failCnt++;
 		}
 	}
 
 	void Tester::AssertEqual(int expected, int actual) {
 		if (IsEqual(expected, actual)) {
-			PrintTestPassed<int>(expected, actual);
+			OutputTestPassed<int>(expected, actual);
 			m_passCnt++;
 		}
 		else {
-			PrintTestFailed<int>(expected, actual);
+			OutputTestFailed<int>(expected, actual);
 			m_failCnt++;
 		}
 	}
 
 	void Tester::AssertEqual(double expected, double actual) {
 		if (IsEqual(expected, actual)) {
-			PrintTestPassed<double>(expected, actual);
+			OutputTestPassed<double>(expected, actual);
 			m_passCnt++;
 		}
 		else {
-			PrintTestFailed<double>(expected, actual);
+			OutputTestFailed<double>(expected, actual);
 			m_failCnt++;
 		}
 	}
 
 	void Tester::AssertEqual(float expected, float actual) {
 		if (IsEqual(expected, actual)) {
-			PrintTestPassed<float>(expected, actual);
+			OutputTestPassed<float>(expected, actual);
 			m_passCnt++;
 		}
 		else {
-			PrintTestFailed<float>(expected, actual);
+			OutputTestFailed<float>(expected, actual);
 			m_failCnt++;
 		}
 	}
@@ -98,24 +103,24 @@ namespace sideswipe {
 	void Tester::AssertTrue(bool actual) {
 		if (IsTrue(actual)) {
 			//you can use it like this
-			//PrintTestPassed(true, actual);
+			//OutputTestPassed(true, actual);
 			// or
-			PrintTestPassed<bool>(true, actual);
+			OutputTestPassed<bool>(true, actual);
 			m_passCnt++;
 		}
 		else {
-			PrintTestFailed<bool>(true, actual);
+			OutputTestFailed<bool>(true, actual);
 			m_failCnt++;
 		}
 	}
 
 	void Tester::AssertFalse(bool actual) {
 		if (IsFalse(actual)) {
-			PrintTestPassed<bool>(false, actual);
+			OutputTestPassed<bool>(false, actual);
 			m_passCnt++;
 		}
 		else {
-			PrintTestFailed<bool>(false, actual);
+			OutputTestFailed<bool>(false, actual);
 			m_failCnt++;
 		}
 	}
@@ -158,8 +163,9 @@ namespace sideswipe {
 		return !actual;
 	}
 
+
 	template<typename T>
-	void Tester::PrintTestPassed(T expected, T actual) {
+	void Tester::OutputTestPassed(T expected, T actual) {
 		std::stringstream pre;
 		if (m_inGroup) {
 			pre << "\t";
@@ -167,10 +173,14 @@ namespace sideswipe {
 		pre << "[&2Pass&] [Expected: " << expected << "] [Actual: " << actual << "]";
 		std::string output = pre.str();
 		m_logger.ToTerminal(output);
+
+		if (m_saveToFile) {
+			m_logger.ToFile(m_filepath, output);
+		}
 	}
 
 	template<typename T>
-	void Tester::PrintTestFailed(T expected, T actual) {
+	void Tester::OutputTestFailed(T expected, T actual) {
 		std::stringstream pre;
 		if (m_inGroup) {
 			pre << "\t";
@@ -178,40 +188,75 @@ namespace sideswipe {
 		pre << "[&4Fail&] [Expected: " << expected << "] [Actual: " << actual << "]";
 		std::string output = pre.str();
 		m_logger.ToTerminal(output);
+
+		if (m_saveToFile) {
+			m_logger.ToFile(m_filepath, output);
+		}
 	}
 
-	void Tester::PrintGroupStart() {
+	void Tester::OutputGroupStart() {
 		std::stringstream pre;
 		pre << "[Group &3" << m_groupName << "&]";
 		std::string output = pre.str();
 		m_logger.ToTerminal(output);
+
+		if (m_saveToFile) {
+			m_logger.ToFile(m_filepath, output);
+		}
 	}
 
-	void Tester::PrintGroupEnd() {
+	void Tester::OutputGroupEnd() {
 		std::stringstream pre;
 		pre << "[End &3" << m_groupName << "&]";
 		std::string output = pre.str();
 		m_logger.ToTerminal(output);
+
+		if (m_saveToFile) {
+			m_logger.ToFile(m_filepath, output);
+		}
 	}
 
-	void Tester::PrintTestingEnvironment() {
-		std::cout << "    Testing Environment" << std::endl;
-		std::cout << "===========================" << std::endl;
-		std::cout << "Epsilon double :    " << m_epsilonDouble << std::endl;
-		std::cout << "Epsilon float  :    " << m_epsilonFloat << std::endl;
-		std::cout << "===========================" << std::endl << std::endl;
+	void Tester::OutputTestEnvironment() {
+		m_logger.ToTerminal("    Testing Environment");
+		m_logger.ToTerminal("===========================");
+		m_logger.ToTerminal("Epsilon double :    " + std::to_string(m_epsilonDouble));
+		m_logger.ToTerminal("Epsilon float  :    " + std::to_string(m_epsilonFloat));
+		m_logger.ToTerminal("===========================");
+		m_logger.ToTerminal("\n");
+		
+		if (m_saveToFile) {
+			m_logger.ToFile(m_filepath, "    Testing Environment");
+			m_logger.ToFile(m_filepath, "===========================");
+			m_logger.ToFile(m_filepath, "Epsilon double :    " + std::to_string(m_epsilonDouble));
+			m_logger.ToFile(m_filepath, "Epsilon float  :    " + std::to_string(m_epsilonFloat));
+			m_logger.ToFile(m_filepath, "===========================");
+			m_logger.ToFile(m_filepath, "\n");
+		}
 	}
 
-	void Tester::PrintResults() {
-		std::cout << std::endl << std::endl;
-		std::cout << "      Test Results" << std::endl;
-		std::cout << "=======================" << std::endl;
-		std::cout << "Total Tests   :    " << m_passCnt + m_failCnt << std::endl;
-		std::cout << "-----------------------" << std::endl;
-		std::cout << "Tests passed  :    " << m_passCnt << std::endl;
-		std::cout << "Tests failed  :    " << m_failCnt << std::endl;
-		std::cout << "=======================" << std::endl;
-		std::cout << "Elapsed time  : " << m_duration.count() << "s" << std::endl;
-		std::cout << "=======================" << std::endl;
+	void Tester::OutputTestResults() {
+		m_logger.ToTerminal("\n");
+		m_logger.ToTerminal("      Test Results");
+		m_logger.ToTerminal("=======================");
+		m_logger.ToTerminal("Total Tests   :    " + std::to_string(m_passCnt + m_failCnt));
+		m_logger.ToTerminal("-----------------------");
+		m_logger.ToTerminal("Tests passed  :    " + std::to_string(m_passCnt));
+		m_logger.ToTerminal("Tests failed  :    " + std::to_string(m_failCnt));
+		m_logger.ToTerminal("=======================");
+		m_logger.ToTerminal("Elapsed Time  : " + std::to_string(m_duration.count()));
+		m_logger.ToTerminal("=======================");
+
+		if (m_saveToFile) {
+			m_logger.ToFile(m_filepath, "\n");
+			m_logger.ToFile(m_filepath, "      Test Results");
+			m_logger.ToFile(m_filepath, "=======================");
+			m_logger.ToFile(m_filepath, "Total Tests   :    " + std::to_string(m_passCnt + m_failCnt));
+			m_logger.ToFile(m_filepath, "-----------------------");
+			m_logger.ToFile(m_filepath, "Tests passed  :    " + std::to_string(m_passCnt));
+			m_logger.ToFile(m_filepath, "Tests failed  :    " + std::to_string(m_failCnt));
+			m_logger.ToFile(m_filepath, "=======================");
+			m_logger.ToFile(m_filepath, "Elapsed Time  : " + std::to_string(m_duration.count()));
+			m_logger.ToFile(m_filepath, "=======================");
+		}		
 	}
 }

@@ -57,6 +57,8 @@ namespace sideswipe {
 		*/
 		void NotTestable(std::string entity);
 
+		void SaveToFile(std::string filepath);
+
 		/**
 		* Test the equality of 2 strings
 		*
@@ -113,6 +115,8 @@ namespace sideswipe {
 		std::string m_groupName;
 		std::chrono::high_resolution_clock::time_point m_startTime;
 		std::chrono::duration<float> m_duration;
+		std::string m_filepath;
+		bool m_saveToFile = false;
 
 		/*
 		* Check the equality of two strings
@@ -172,36 +176,18 @@ namespace sideswipe {
 		*/
 		bool IsFalse(bool val);
 
-		/*
-		* Print test passed to the terminal
-		*/
 		template<typename T>
-		void PrintTestPassed(T expected, T actual);
+		void OutputTestPassed(T expected, T actual);
 
-		/*
-		* Print test failed to the terminal
-		*/
 		template<typename T>
-		void PrintTestFailed(T expected, T actual);
+		void OutputTestFailed(T expected, T actual);
 
-		/*
-		* Print group start to the terminal
-		*/
-		void PrintGroupStart();
+		void OutputGroupStart();
 
-		/*
-		* Print group end to the terminal
-		*/
-		void PrintGroupEnd();
+		void OutputGroupEnd();
 
-		/*
-		* Print the testing environment to the terminal
-		*/
-		void PrintTestingEnvironment();
+		void OutputTestEnvironment();
 
-		/*
-		* Print the results of the test to the terminal
-		*/
-		void PrintResults();
+		void OutputTestResults();
 	};
 }
