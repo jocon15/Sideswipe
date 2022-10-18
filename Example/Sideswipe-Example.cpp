@@ -7,6 +7,7 @@ int main(int argc, char* argv[]) {
 	tester.SaveToFile("D:/log.txt");
 	tester.StartGroup("TestCases");
 	tester.AssertTrue(true);
+	tester.TestNote("Starting engine");
 	tester.AssertTrue(true);
 	tester.AssertTrue(true);
 	tester.AssertTrue(true);

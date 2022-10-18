@@ -57,7 +57,19 @@ namespace sideswipe {
 		*/
 		void NotTestable(std::string entity);
 
+		/**
+		* Tell the tester to save the test results to a file
+		* 
+		* @param filepath the path of the file to write to
+		*/
 		void SaveToFile(std::string filepath);
+
+		/**
+		* Add a note to the test output
+		* 
+		* @param message the message output
+		*/
+		void TestNote(std::string message);
 
 		/**
 		* Test the equality of 2 strings
