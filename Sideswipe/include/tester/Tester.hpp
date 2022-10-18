@@ -7,7 +7,7 @@
 #ifdef COMPILING_DLL
 	#include "Bonfire.hpp"
 #else
-	#include "../dependencies/Bonfire/Bonfire/include/Bonfire.hpp"
+	#include "../../dependencies/Bonfire/Bonfire/include/Bonfire.hpp"
 #endif 
 
 namespace sideswipe {
@@ -67,9 +67,16 @@ namespace sideswipe {
 		/**
 		* Add a note to the test output
 		* 
-		* @param message the message output
+		* @param message the message to output
 		*/
 		void TestNote(std::string message);
+
+		/**
+		* Add plaintext to the output
+		* 
+		* @param message the message to output
+		*/
+		void TestPlainText(std::string message);
 
 		/**
 		* Test the equality of 2 strings

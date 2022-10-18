@@ -31,7 +31,7 @@ project "Bonfire"
 			"BONFIRE_EXPORTS",
 			"_WINDOWS",
 			"_USRDLL",
-			"GE_PLATFORM_WINDOWS",
+			--"GE_PLATFORM_WINDOWS",
 			"COMPILING_DLL"
 		}
 
@@ -82,7 +82,7 @@ project "Sideswipe"
 			"BONFIRE_EXPORTS",
 			"_WINDOWS",
 			"_USRDLL",
-			"GE_PLATFORM_WINDOWS",
+			--"GE_PLATFORM_WINDOWS",
 			"COMPILING_DLL"
 		}
 
@@ -129,8 +129,8 @@ project "Example"
 		systemversion "latest"
 
 		defines{
-			"_CONSOLE",
-			"GE_PLATFORM_WINDOWS"
+			"_CONSOLE"--,
+			--"GE_PLATFORM_WINDOWS"
 		}
 
 	filter "configurations:Debug"

@@ -71,6 +71,21 @@ namespace sideswipe {
 		}
 	}
 
+	void Tester::TestPlainText(std::string message) {
+		std::stringstream pre;
+		if (m_inGroup) {
+			pre << "\t";
+		}
+		//pre << "[&8Note&: " << message << "]";
+		pre << message;
+		std::string output = pre.str();
+		m_logger.ToTerminal(output);
+
+		if (m_saveToFile) {
+			m_logger.ToFile(m_filepath, output);
+		}
+	}
+
 	void Tester::AssertEqual(std::string expected, std::string actual) {
 		if (IsEqual(expected, actual)) {
 			OutputTestPassed<std::string>(expected, actual);
