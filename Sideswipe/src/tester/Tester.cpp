@@ -5,19 +5,19 @@ namespace sideswipe {
 	// ========== Public Definitions ==========
 
 	Tester::Tester() {
-		m_startTime = timing::TimePoint();
+		m_testStartTime = timing::TimePoint();
 		OutputTestEnvironment();
 	}
 
 	Tester::Tester(double epsilonD, float epsilonF) {
-		m_startTime = timing::TimePoint();
+		m_testStartTime = timing::TimePoint();
 		m_epsilonDouble = epsilonD;
 		m_epsilonFloat = epsilonF;
 		OutputTestEnvironment();
 	}
 
 	Tester::~Tester() {
-		m_duration = timing::TimePoint() - m_startTime;
+		m_testElapsedTime = timing::TimePoint() - m_testStartTime;
 
 		// Output the test results
 		OutputTestResults();
@@ -34,20 +34,22 @@ namespace sideswipe {
 		m_groupName = groupName;
 		m_inGroup = true;
 		OutputGroupStart();
+		m_groupStartTime = timing::TimePoint();
 	}
 
 	void Tester::EndGroup() {
+		m_groupElapsedTime = timing::TimePoint() - m_groupStartTime;
 		m_inGroup = false;
 		OutputGroupEnd();
 	}
 
 	void Tester::NotTestable(std::string entity) {
-		std::stringstream pre;
+		std::stringstream ss;
 		if (m_inGroup) {
-			pre << "\t";
+			ss << "\t";
 		}
-		pre << "[&6Warning&] [" << entity << " is not testable]";
-		std::string output = pre.str();
+		ss << "[&6Warning&] [" << entity << " is not testable]";
+		std::string output = ss.str();
 		m_logger.ToTerminal(output);
 	}
 
@@ -57,13 +59,13 @@ namespace sideswipe {
 	}
 
 	void Tester::TestNote(std::string message) {
-		std::stringstream pre;
+		std::stringstream ss;
 		if (m_inGroup) {
-			pre << "\t";
+			ss << "\t";
 		}
-		//pre << "[&8Note&: " << message << "]";
-		pre << "[&8" << message << "&]";
-		std::string output = pre.str();
+		//ss << "[&8Note&: " << message << "]";
+		ss << "[&8" << message << "&]";
+		std::string output = ss.str();
 		m_logger.ToTerminal(output);
 
 		if (m_saveToFile) {
@@ -72,13 +74,12 @@ namespace sideswipe {
 	}
 
 	void Tester::TestPlainText(std::string message) {
-		std::stringstream pre;
+		std::stringstream ss;
 		if (m_inGroup) {
-			pre << "\t";
+			ss << "\t";
 		}
-		//pre << "[&8Note&: " << message << "]";
-		pre << message;
-		std::string output = pre.str();
+		ss << message;
+		std::string output = ss.str();
 		m_logger.ToTerminal(output);
 
 		if (m_saveToFile) {
@@ -88,11 +89,11 @@ namespace sideswipe {
 
 	void Tester::AssertEqual(std::string expected, std::string actual) {
 		if (IsEqual(expected, actual)) {
-			OutputTestPassed<std::string>(expected, actual);
+			OutputTestPassed<std::string>(AddQuotations(expected), AddQuotations(actual));
 			m_passCnt++;
 		}
 		else {
-			OutputTestFailed<std::string>(expected, actual);
+			OutputTestFailed<std::string>(AddQuotations(expected), AddQuotations(actual));
 			m_failCnt++;
 		}
 	}
@@ -185,23 +186,14 @@ namespace sideswipe {
 			return false;
 	}
 
-	bool Tester::IsTrue(bool actual) {
-		return actual;
-	}
-
-	bool Tester::IsFalse(bool actual) {
-		return !actual;
-	}
-
-
 	template<typename T>
 	void Tester::OutputTestPassed(T expected, T actual) {
-		std::stringstream pre;
+		std::stringstream ss;
 		if (m_inGroup) {
-			pre << "\t";
+			ss << "\t";
 		}
-		pre << "[&2Pass&] [Expected: " << expected << "] [Actual: " << actual << "]";
-		std::string output = pre.str();
+		ss << "[&2Pass&] [Expected: " << expected << "] [Actual: " << actual << "]";
+		std::string output = ss.str();
 		m_logger.ToTerminal(output);
 
 		if (m_saveToFile) {
@@ -211,12 +203,12 @@ namespace sideswipe {
 
 	template<typename T>
 	void Tester::OutputTestFailed(T expected, T actual) {
-		std::stringstream pre;
+		std::stringstream ss;
 		if (m_inGroup) {
-			pre << "\t";
+			ss << "\t";
 		}
-		pre << "[&4Fail&] [Expected: " << expected << "] [Actual: " << actual << "]";
-		std::string output = pre.str();
+		ss << "[&4Fail&] [Expected: " << expected << "] [Actual: " << actual << "]";
+		std::string output = ss.str();
 		m_logger.ToTerminal(output);
 
 		if (m_saveToFile) {
@@ -225,9 +217,9 @@ namespace sideswipe {
 	}
 
 	void Tester::OutputGroupStart() {
-		std::stringstream pre;
-		pre << "[Group &3" << m_groupName << "&]";
-		std::string output = pre.str();
+		std::stringstream ss;
+		ss << "[Group &3" << m_groupName << "&]";
+		std::string output = ss.str();
 		m_logger.ToTerminal(output);
 
 		if (m_saveToFile) {
@@ -236,29 +228,35 @@ namespace sideswipe {
 	}
 
 	void Tester::OutputGroupEnd() {
-		std::stringstream pre;
-		pre << "[End &3" << m_groupName << "&]";
-		std::string output = pre.str();
-		m_logger.ToTerminal(output);
+		std::stringstream ss;
+		ss << "[Elapsed time: " << m_groupElapsedTime.count() << " s]";
+		std::string output1 = ss.str();
+		m_logger.ToTerminal(output1);
+
+		ss.str(std::string()); // clear the stringstream
+		ss << "[End &3" << m_groupName << "&]";
+		std::string output2 = ss.str();
+		m_logger.ToTerminal(output2);
 
 		if (m_saveToFile) {
-			m_logger.ToFile(m_filepath, output);
+			m_logger.ToFile(m_filepath, output1);
+			m_logger.ToFile(m_filepath, output2);
 		}
 	}
 
 	void Tester::OutputTestEnvironment() {
 		m_logger.ToTerminal("    Testing Environment");
 		m_logger.ToTerminal("===========================");
-		m_logger.ToTerminal("Epsilon double :    " + std::to_string(m_epsilonDouble));
-		m_logger.ToTerminal("Epsilon float  :    " + std::to_string(m_epsilonFloat));
+		m_logger.ToTerminal("Epsilon double : " + std::to_string(m_epsilonDouble));
+		m_logger.ToTerminal("Epsilon float  : " + std::to_string(m_epsilonFloat));
 		m_logger.ToTerminal("===========================");
 		m_logger.ToTerminal("\n");
 		
 		if (m_saveToFile) {
 			m_logger.ToFile(m_filepath, "    Testing Environment");
 			m_logger.ToFile(m_filepath, "===========================");
-			m_logger.ToFile(m_filepath, "Epsilon double :    " + std::to_string(m_epsilonDouble));
-			m_logger.ToFile(m_filepath, "Epsilon float  :    " + std::to_string(m_epsilonFloat));
+			m_logger.ToFile(m_filepath, "Epsilon double : " + std::to_string(m_epsilonDouble));
+			m_logger.ToFile(m_filepath, "Epsilon float  : " + std::to_string(m_epsilonFloat));
 			m_logger.ToFile(m_filepath, "===========================");
 			m_logger.ToFile(m_filepath, "\n");
 		}
@@ -273,7 +271,7 @@ namespace sideswipe {
 		m_logger.ToTerminal("Tests passed  :    " + std::to_string(m_passCnt));
 		m_logger.ToTerminal("Tests failed  :    " + std::to_string(m_failCnt));
 		m_logger.ToTerminal("=======================");
-		m_logger.ToTerminal("Elapsed Time  : " + std::to_string(m_duration.count()));
+		m_logger.ToTerminal("Elapsed Time  : " + std::to_string(m_testElapsedTime.count()) + " s");
 		m_logger.ToTerminal("=======================");
 
 		if (m_saveToFile) {
@@ -285,7 +283,7 @@ namespace sideswipe {
 			m_logger.ToFile(m_filepath, "Tests passed  :    " + std::to_string(m_passCnt));
 			m_logger.ToFile(m_filepath, "Tests failed  :    " + std::to_string(m_failCnt));
 			m_logger.ToFile(m_filepath, "=======================");
-			m_logger.ToFile(m_filepath, "Elapsed Time  : " + std::to_string(m_duration.count()));
+			m_logger.ToFile(m_filepath, "Elapsed Time  : " + std::to_string(m_testElapsedTime.count()) + " s");
 			m_logger.ToFile(m_filepath, "=======================");
 		}		
 	}

@@ -125,15 +125,17 @@ namespace sideswipe {
 		void AssertFalse(bool actual);
 
 	private:
-		CustomLogger m_logger = CustomLogger();
+		bf::CustomLogger m_logger = bf::CustomLogger();
 		double m_epsilonDouble = 0.001;
 		float m_epsilonFloat = 0.001f;
 		unsigned int m_passCnt = 0;
 		unsigned int m_failCnt = 0;
 		bool m_inGroup = false;
 		std::string m_groupName;
-		std::chrono::high_resolution_clock::time_point m_startTime;
-		std::chrono::duration<float> m_duration;
+		std::chrono::high_resolution_clock::time_point m_testStartTime;
+		std::chrono::high_resolution_clock::time_point m_groupStartTime;
+		std::chrono::duration<float> m_testElapsedTime;
+		std::chrono::duration<float> m_groupElapsedTime;
 		std::string m_filepath;
 		bool m_saveToFile = false;
 
@@ -180,11 +182,13 @@ namespace sideswipe {
 		/*
 		* Check the truth value of a boolean
 		*
-		* @param val the value to be checked
+		* @param value the value to be checked
 		*
 		* @return if the value is true
 		*/
-		bool IsTrue(bool val);
+		inline bool IsTrue(bool value) {
+			return value;
+		}
 
 		/*
 		* Check the truth value of a boolean
@@ -193,20 +197,57 @@ namespace sideswipe {
 		*
 		* @return if the value is false
 		*/
-		bool IsFalse(bool val);
+		inline bool IsFalse(bool value) {
+			return !value;
+		}
 
+		/*
+		* Output a test passed entry
+		* 
+		* @param expected the expected value
+		* @param actual the actual value
+		*/
 		template<typename T>
 		void OutputTestPassed(T expected, T actual);
 
+		/*
+		* Output a test failed entry
+		*
+		* @param expected the expected value
+		* @param actual the actual value
+		*/
 		template<typename T>
 		void OutputTestFailed(T expected, T actual);
 
+		/*
+		* Output a group start entry
+		*/
 		void OutputGroupStart();
 
+		/*
+		* Output a group end entry
+		*/
 		void OutputGroupEnd();
 
+		/*
+		* Output the test environment information
+		*/
 		void OutputTestEnvironment();
 
+		/*
+		* Output the test results
+		*/
 		void OutputTestResults();
+
+		/*
+		* Add escaped quotations to a string
+		* 
+		* @param str the string to add quotations to
+		* 
+		* @return a string with escaped quotations
+		*/
+		inline std::string AddQuotations(std::string str) {
+			return "\"" + str + "\"";
+		}
 	};
 }
