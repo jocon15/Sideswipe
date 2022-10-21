@@ -1,6 +1,6 @@
 #include "../../include/tester/Tester.hpp"
 
-namespace sideswipe {
+namespace ss {
 
 	// ========== Public Definitions ==========
 
@@ -133,9 +133,6 @@ namespace sideswipe {
 
 	void Tester::AssertTrue(bool actual) {
 		if (IsTrue(actual)) {
-			//you can use it like this
-			//OutputTestPassed(true, actual);
-			// or
 			OutputTestPassed<bool>(true, actual);
 			m_passCnt++;
 		}

@@ -6,9 +6,9 @@ namespace timing {
 	/**
 	* Get the current point in time
 	* 
-	* @return a high res timepoint
+	* @return a high resolution timepoint
 	*/
-	std::chrono::high_resolution_clock::time_point TimePoint() {
+	inline std::chrono::high_resolution_clock::time_point TimePoint() {
 		return std::chrono::high_resolution_clock::now();
 	};
 }

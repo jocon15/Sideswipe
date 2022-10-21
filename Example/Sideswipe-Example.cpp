@@ -2,7 +2,7 @@
 
 
 int main(int argc, char* argv[]) {
-	sideswipe::Tester tester = sideswipe::Tester();
+	ss::Tester tester = ss::Tester();
 	tester.SaveToFile("D:/log.txt");
 	tester.StartGroup("TestCases");
 	tester.AssertTrue(true);

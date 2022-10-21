@@ -10,7 +10,7 @@
 	#include "../../dependencies/Bonfire/Bonfire/include/Bonfire.hpp"
 #endif 
 
-namespace sideswipe {
+namespace ss {
 
 	class SIDESWIPE_API Tester {
 	public:
